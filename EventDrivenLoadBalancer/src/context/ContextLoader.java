@@ -27,7 +27,7 @@ public class ContextLoader {
 	}
 	
 	public static void loadContexts(String fileName) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException{
-		File inputFile = new File("input.txt");
+		File inputFile = new File(fileName);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         Document doc = dBuilder.parse(inputFile);
@@ -52,9 +52,14 @@ public class ContextLoader {
 		for(int i = 0; i < children.getLength(); i++){
 			Node child = children.item(i);
 			switch(child.getNodeName()){
-			case ContextNodes.CONNECTION:
-				ConnectionContext childContext = processContextNode(child);
-				childContext.setListensFor(context);
+			case ContextNodes.CONNECTIONS:
+				NodeList connections = child.getChildNodes();
+				for(int j = 0; j < connections.getLength();j++){
+					if(ContextNodes.CONNECTION.equals(connections.item(j).getNodeName())){
+						ConnectionContext childContext = processContextNode(connections.item(j));
+						childContext.setListensFor(context);
+					}
+				}
 				break;
 			case ContextNodes.ALGORITHM:
 				context.setAlgorithm(child.getChildNodes().item(0).getNodeValue());
