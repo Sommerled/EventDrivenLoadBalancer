@@ -3,6 +3,8 @@ package server;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -18,6 +20,8 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
+
+import context.ConnectionContext;
 
 /**
  * A factory for creating Sockets
@@ -110,6 +114,57 @@ public class LbSocketFactory {
 
 		SSLSocketFactory ssf = sc.getSocketFactory(); 
 		SSLSocket s = (SSLSocket) ssf.createSocket(host, port);
+		return s;
+	}
+	
+	/**
+	 * Creates either a plain socket or an ssl socket depending
+	 * upon the Connection Context <c>.
+	 * 
+	 * @param c
+	 * @return
+	 * @throws UnrecoverableKeyException
+	 * @throws KeyManagementException
+	 * @throws KeyStoreException
+	 * @throws NoSuchAlgorithmException
+	 * @throws CertificateException
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	public static Socket createSocket(ConnectionContext c) throws UnrecoverableKeyException, KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, FileNotFoundException, IOException{
+		Socket s = null;
+		
+		if("None".equals(c.getProtocol())){
+			s = new Socket(c.getHost(), c.getPort());
+		}else{
+			s = createSSLSocket(c.getHost(), c.getPort(), c.getKeystorePath(), c.getKeystoreType(), c.getKeystorePassword(), c.getAlgorithm(), c.getProtocol());
+		}
+		
+		return s;
+	}
+	
+	/**
+	 * Creates either a plain server socket or an ssl server socket
+	 * depending upon the Connection Context <c>.
+	 * 
+	 * @param c
+	 * @return
+	 * @throws IOException
+	 * @throws UnrecoverableKeyException
+	 * @throws KeyManagementException
+	 * @throws KeyStoreException
+	 * @throws NoSuchAlgorithmException
+	 * @throws CertificateException
+	 */
+	public static ServerSocket createServerSocket(ConnectionContext c) throws IOException, UnrecoverableKeyException, KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException{
+		ServerSocket s = null;
+		
+		if("None".equals(c.getProtocol())){
+			s = new ServerSocket(c.getPort());
+		}else{
+			s = createSSLServerSocket(c.getPort(), c.getKeystorePath(), c.getKeystoreType(), c.getKeystorePassword(), c.getAlgorithm(), c.getProtocol());
+		}
+		
 		return s;
 	}
 }

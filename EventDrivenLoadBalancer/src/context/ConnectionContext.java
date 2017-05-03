@@ -8,6 +8,9 @@ public class ConnectionContext {
 	private String protocol;
 	private boolean listening;
 	private ConnectionContext listensFor;
+	private String keystorePath = "";
+	private String keystorePassword = "";
+	private String keystoreType = "";
 	
 	public ConnectionContext(){
 		
@@ -77,5 +80,29 @@ public class ConnectionContext {
 	
 	public ConnectionContext getListensFor(){
 		return this.listensFor;
+	}
+	
+	public void setKeystorePath(String path){
+		this.keystorePath = path;
+	}
+	
+	public String getKeystorePath(){
+		return this.keystorePath;
+	}
+	
+	public void setKeystorePassword(String pass){
+		this.keystorePassword = pass;
+	}
+	
+	public String getKeystorePassword(){
+		return this.keystorePassword;
+	}
+	
+	public void setKeystoreType(String type){
+		this.keystoreType = type;
+	}
+	
+	public String getKeystoreType(){
+		return this.keystoreType;
 	}
 }

@@ -18,7 +18,7 @@ public class ServerMain {
 		
 		try {
 			ContextLoader.loadContexts(configFile);
-			List<ConnectionContext> contexts = ContextLoader.getLoadedContexts();
+			new Server();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

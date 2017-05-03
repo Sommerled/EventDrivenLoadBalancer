@@ -10,7 +10,7 @@ public class Server {
 	private EventHandler handler = null;
 	
 	public Server(){
-		
+		init();
 	}
 	
 	public void init(){
