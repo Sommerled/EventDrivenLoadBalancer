@@ -23,20 +23,27 @@ public abstract class AbsEventConsumer extends AbsWorker{
 	@Override
 	public void work(){
 		while(true){
-			AbsEvent e = this.eventListener.peek();
-			if(e instanceof SystemMessageEvent){
-				SystemMessageEvent sme = (SystemMessageEvent) e;
-				if(sme.getPayload().equals(SystemMessage.SHUTDOWN)){
-					shutdown();
-					sme.processedId(this.getId());
-					idComplete(this.getId());
-					this.setId(null);
+			AbsEvent e;
+			try {
+				e = this.eventListener.peek();
+				if(e instanceof SystemMessageEvent){
+					SystemMessageEvent sme = (SystemMessageEvent) e;
+					if(sme.getPayload().equals(SystemMessage.SHUTDOWN)){
+						shutdown();
+						sme.processedId(this.getId());
+						idComplete(this.getId());
+						this.setId(null);
+					}
+				}else if(validEvent(e)){
+					if(this.eventListener.remove(e)){
+						this.process(e);
+					}
 				}
-			}else if(validEvent(e)){
-				if(this.eventListener.remove(e)){
-					this.process(e);
-				}
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+				break;
 			}
+			
 		}
 	}
 	
