@@ -6,25 +6,41 @@ import eventhandler.AbsEvent;
 import eventhandler.EventDispatcher;
 
 public abstract class AbsEventProducer extends AbsWorker {
-
+	private EventDispatcher eventDispatcher = null;
+	
 	public AbsEventProducer(EventDispatcher eventDispatcher) {
-		super(eventDispatcher);
+		this.eventDispatcher = eventDispatcher;
+	}
+	
+	public void setEventDispatcher(EventDispatcher eventDispatcher){
+		this.eventDispatcher = eventDispatcher;
+	}
+	
+	public EventDispatcher getEventDispatcher(){
+		return this.eventDispatcher;
 	}
 	
 	@Override
 	public void work(){
-		EventDispatcher eventDispatcher = this.getEventDispatcher();
 		while(true){
 			List<AbsEvent> events = produce();
-			for(int i = 0; i < events.size(); i++){
-				try {
-					eventDispatcher.put(events.get(i));
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-					break;
-				}
+			try {
+				dispatchEvents(events);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				break;
 			}
 		}
+	}
+	
+	public void dispatchEvents(List<AbsEvent> events) throws InterruptedException{
+		for(int i = 0; i < events.size(); i++){
+			this.eventDispatcher.put(events.get(i));
+		}
+	}
+	
+	public void shutdown(){
+		this.eventDispatcher = null;
 	}
 	
 	public abstract List<AbsEvent> produce();
