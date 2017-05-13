@@ -23,10 +23,17 @@ public abstract class AbsEventProducer extends AbsWorker {
 	@Override
 	public void work(){
 		while(true){
-			List<AbsEvent> events = produce();
+			List<AbsEvent> events;
 			try {
-				dispatchEvents(events);
-			} catch (InterruptedException e) {
+				events = produce();
+
+				try {
+					dispatchEvents(events);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+					break;
+				}
+			} catch (Exception e) {
 				e.printStackTrace();
 				break;
 			}
@@ -43,5 +50,5 @@ public abstract class AbsEventProducer extends AbsWorker {
 		this.eventDispatcher = null;
 	}
 	
-	public abstract List<AbsEvent> produce();
+	public abstract List<AbsEvent> produce() throws Exception;
 }
