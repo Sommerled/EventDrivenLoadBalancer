@@ -1,15 +1,14 @@
 package eventhandler;
 
-import server.AbsWorker;
-
 public class IdCompleteEvent extends AbsEvent{
-
+	private Integer payload;
+	
 	public IdCompleteEvent(Integer payload) {
-		super(null, payload, null);
+		super(null, null);
+		this.payload = payload;
 	}
 	
-	@Override
 	public Integer getPayload(){
-		return (Integer) super.getPayload();
+		return this.payload;
 	}
 }

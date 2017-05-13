@@ -2,7 +2,7 @@ package eventhandler;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class EventHandler implements EventPoller {
+public class EventHandler implements EventDispatcher {
 	private LinkedBlockingQueue<AbsEvent> eventQueue = null;
 	
 	public EventHandler(){

@@ -1,8 +1,5 @@
 package server;
 
-import java.util.List;
-
-import context.ConnectionContext;
 import context.ContextLoader;
 
 public class ServerMain {

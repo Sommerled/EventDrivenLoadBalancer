@@ -4,12 +4,10 @@ import server.AbsWorker;
 
 public abstract class AbsEvent {
 	private Integer id;
-	private Object payload;
 	private AbsWorker originator;
 	
-	public AbsEvent(Integer id, Object payload, AbsWorker originator){
+	public AbsEvent(Integer id, AbsWorker originator){
 		this.id = id;
-		this.payload = payload;
 		this.originator = originator;
 	}
 	
@@ -17,11 +15,11 @@ public abstract class AbsEvent {
 		return this.id;
 	}
 	
-	public Object getPayload(){
-		return this.payload;
-	}
-	
 	public AbsWorker getOriginator(){
 		return this.originator;
+	}
+	
+	public void destroy(){
+		this.originator = null;
 	}
 }
