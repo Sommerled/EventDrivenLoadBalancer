@@ -5,6 +5,9 @@ import eventhandler.EventListener;
 import eventhandler.SystemMessage;
 import eventhandler.SystemMessageEvent;
 
+/**
+ * An abstract object for consuming events.
+ */
 public abstract class AbsEventConsumer extends AbsWorker{
 	private EventListener eventListener = null;
 
@@ -36,7 +39,7 @@ public abstract class AbsEventConsumer extends AbsWorker{
 					}
 				}else if(validEvent(e)){
 					if(this.eventListener.remove(e)){
-						this.process(e);
+						this.consume(e);
 					}
 				}
 			} catch (InterruptedException e1) {
@@ -54,5 +57,5 @@ public abstract class AbsEventConsumer extends AbsWorker{
 	
 	public abstract void idComplete(Integer id);
 	public abstract boolean validEvent(AbsEvent e);
-	public abstract void process(AbsEvent e);
+	public abstract void consume(AbsEvent e) throws InterruptedException;
 }

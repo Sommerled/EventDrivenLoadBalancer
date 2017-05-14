@@ -8,6 +8,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.util.ArrayList;
 import java.util.List;
 
 import context.ConnectionContext;
@@ -70,11 +71,12 @@ public class ServerSocketWorker extends AbsEventProducer implements Runnable {
 	@Override
 	public List<AbsEvent> produce() throws IOException, InterruptedException {
 		Socket socket = null;
+		List<AbsEvent>events = new ArrayList<AbsEvent>();
 		while(socket == null){
 			try {
 				socket = this.ss.accept();
 				NewSocketEvent nsEvent = new NewSocketEvent(this.getId(), this, socket, this.context);
-				this.getEventDispatcher().put(nsEvent);
+				events.add(nsEvent);
 			} catch (IOException e) {
 				e.printStackTrace();
 				if(this.ss.isClosed()){
@@ -84,7 +86,7 @@ public class ServerSocketWorker extends AbsEventProducer implements Runnable {
 				}
 			}
 		}
-		return null;
+		return events;
 	}
 
 	@Override
