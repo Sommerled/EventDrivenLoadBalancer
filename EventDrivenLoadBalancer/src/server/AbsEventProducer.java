@@ -4,11 +4,13 @@ import java.util.List;
 
 import eventhandler.AbsEvent;
 import eventhandler.EventDispatcher;
+import eventhandler.EventDispatcherException;
+import eventhandler.EventDispatcherAware;
 
 /**
  * An abstract object for producing events.
  */
-public abstract class AbsEventProducer extends AbsWorker {
+public abstract class AbsEventProducer extends AbsWorker implements EventDispatcherAware{
 	private EventDispatcher eventDispatcher = null;
 	
 	public AbsEventProducer(EventDispatcher eventDispatcher) {
@@ -24,25 +26,28 @@ public abstract class AbsEventProducer extends AbsWorker {
 	}
 	
 	@Override
-	public void work(){
+	public void work() throws EventDispatcherException{
 		List<AbsEvent> events;
-		
-		do{
-			try {
-				events = produce();
-				if(events != null){
-					try {
-						dispatchEvents(events);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-						break;
+		if(this.eventDispatcher == null){
+			throw new EventDispatcherException("eventDispatcher not set", this.getId());
+		}else{
+			do{
+				try {
+					events = produce();
+					if(events != null){
+						try {
+							dispatchEvents(events);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+							break;
+						}
 					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					break;
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				break;
-			}
-		}while(events != null && events.size() > 0);
+			}while(events != null && events.size() > 0);
+		}
 	}
 	
 	public void dispatchEvents(List<AbsEvent> events) throws InterruptedException{

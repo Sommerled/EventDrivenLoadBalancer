@@ -13,23 +13,25 @@ import java.util.List;
 
 import context.ConnectionContext;
 import eventhandler.AbsEvent;
+import eventhandler.ErrorProne;
 import eventhandler.EventDispatcher;
-import server.AbsEventProducer;
+import eventhandler.EventDispatcherException;
 import server.LbSocketFactory;
+import server.connectionkeeper.ConnectionProducer;
+import server.connectionkeeper.EventInitializable;
 
-public class ServerSocketWorker extends AbsEventProducer implements Runnable {
-	private ConnectionContext context;
+public class ServerSocketWorker extends ConnectionProducer implements ErrorProne, EventInitializable{
 	private ServerSocket ss;
+	private EventDispatcherException ede = null;
 
 	public ServerSocketWorker(EventDispatcher eventDispatcher, ConnectionContext context) {
-		super(eventDispatcher);
-		this.context = context;
+		super(eventDispatcher, context);
 	}
 
 	@Override
 	public void shutdown() {
 		super.shutdown();
-		this.context = null;
+		this.setConnection(null);
 		if(this.ss != null){
 			try {
 				this.ss.close();
@@ -41,9 +43,10 @@ public class ServerSocketWorker extends AbsEventProducer implements Runnable {
 
 	@Override
 	public void run() {
-		SocketWorkerExceptionEvent sweEvent = new SocketWorkerExceptionEvent(this.getId(), this, null, this.context);
+		SocketWorkerExceptionEvent sweEvent = new SocketWorkerExceptionEvent(this.getId(), this, null, this.getContext());
+		
 		try {
-			this.ss = LbSocketFactory.createServerSocket(this.context);
+			this.ss = LbSocketFactory.createServerSocket(this.getContext());
 			work();
 		} catch (UnrecoverableKeyException e) {
 			sweEvent.setException(e);
@@ -57,6 +60,9 @@ public class ServerSocketWorker extends AbsEventProducer implements Runnable {
 			sweEvent.setException(e);
 		} catch (IOException e) {
 			sweEvent.setException(e);
+		} catch (eventhandler.EventDispatcherException e1) {
+			ede = (EventDispatcherException) e1;
+			return;
 		}
 		
 		if(sweEvent.getException() != null){
@@ -66,6 +72,7 @@ public class ServerSocketWorker extends AbsEventProducer implements Runnable {
 				e.printStackTrace();
 			}
 		}
+		
 	}
 
 	@Override
@@ -75,12 +82,12 @@ public class ServerSocketWorker extends AbsEventProducer implements Runnable {
 		while(socket == null){
 			try {
 				socket = this.ss.accept();
-				NewSocketEvent nsEvent = new NewSocketEvent(this.getId(), this, socket, this.context);
+				NewSocketEvent nsEvent = new NewSocketEvent(this.getId(), this, socket, this.getContext());
 				events.add(nsEvent);
 			} catch (IOException e) {
 				e.printStackTrace();
 				if(this.ss.isClosed()){
-					SocketWorkerExceptionEvent sweEvent = new SocketWorkerExceptionEvent(this.getId(), this, e, this.context);
+					SocketWorkerExceptionEvent sweEvent = new SocketWorkerExceptionEvent(this.getId(), this, e, this.getContext());
 					this.getEventDispatcher().put(sweEvent);
 					throw new IOException(e);
 				}
@@ -93,6 +100,17 @@ public class ServerSocketWorker extends AbsEventProducer implements Runnable {
 	public List<AbsEvent> init() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public Exception getException() {
+		return this.ede;
+	}
+
+	@Override
+	public void setInitialEvent(AbsEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

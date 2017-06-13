@@ -5,12 +5,13 @@ import java.util.List;
 import eventhandler.AbsEvent;
 import eventhandler.EventDispatcher;
 import eventhandler.EventListener;
+import eventhandler.EventDispatcherAware;
 
 /**
  * This object consumes and produces events.
  *
  */
-public abstract class AbsEventProcesser extends AbsEventConsumer{
+public abstract class AbsEventProcesser extends AbsEventConsumer implements EventDispatcherAware{
 	private EventDispatcher eventDispatcher = null;
 
 	public AbsEventProcesser(EventListener eventListener, EventDispatcher eventDispatcher) {
