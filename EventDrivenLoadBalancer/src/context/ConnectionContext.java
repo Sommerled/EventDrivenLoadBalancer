@@ -11,13 +11,16 @@ public class ConnectionContext {
 	private String keystorePath = "";
 	private String keystorePassword = "";
 	private String keystoreType = "";
+	private String keyAlgorithm = "";
+	private HTTPContext http = null;
 	
 	public ConnectionContext(){
 		
 	}
 	
 	public ConnectionContext(Integer timeout, String host, Integer port, 
-			String algorithm, String protocol, boolean listening, ConnectionContext listensFor){
+			String algorithm, String protocol, boolean listening, 
+			ConnectionContext listensFor, HTTPContext http){
 		this.timeout = timeout;
 		this.host = host;
 		this.port = port;
@@ -104,5 +107,21 @@ public class ConnectionContext {
 	
 	public String getKeystoreType(){
 		return this.keystoreType;
+	}
+	
+	public void setKeyAlgorithm(String keyAlgorithm){
+		this.keyAlgorithm = keyAlgorithm;
+	}
+	
+	public String getKeyAlgorithm(){
+		return this.keyAlgorithm;
+	}
+	
+	public void setHttpContext(HTTPContext http){
+		this.http = http;
+	}
+	
+	public HTTPContext getHttpContext(){
+		return this.http;
 	}
 }

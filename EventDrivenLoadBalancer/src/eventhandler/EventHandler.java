@@ -12,13 +12,17 @@ public class EventHandler implements EventDispatcher, EventListener {
 	@Override
 	public void put(AbsEvent e) throws InterruptedException {
 		this.eventQueue.put(e);
-		this.notifyAll();
+		synchronized(this){
+			this.notifyAll();
+		}
 	}
 
 	@Override
 	public AbsEvent peek() throws InterruptedException {
-		while(size() == 0){
-			this.wait();
+		synchronized(this){
+			while(size() == 0){
+				this.wait();
+			}
 		}
 		
 		return this.eventQueue.peek();

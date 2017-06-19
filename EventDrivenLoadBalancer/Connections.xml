@@ -7,6 +7,12 @@
 		<Protocol>SSL</Protocol>
 		<Algorithm>Round Robin</Algorithm>
 		<Listening>true</Listening>
+		<keystore>
+			<store>test_store</store>
+			<password>changeit</password>
+			<type>JKS</type>
+			<KeyAlgorithm>SunX509</KeyAlgorithm>
+		</keystore>
 		<Connections>
 			<Connection>
 				<Host>localhost</Host>

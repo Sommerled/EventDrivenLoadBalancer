@@ -20,7 +20,7 @@ import server.LbSocketFactory;
 import server.connectionkeeper.ConnectionProducer;
 import server.connectionkeeper.EventInitializable;
 
-public class ServerSocketWorker extends ConnectionProducer implements ErrorProne, EventInitializable{
+public class ServerSocketWorker extends ConnectionProducer implements ErrorProne{
 	private ServerSocket ss;
 	private EventDispatcherException ede = null;
 
@@ -105,12 +105,6 @@ public class ServerSocketWorker extends ConnectionProducer implements ErrorProne
 	@Override
 	public Exception getException() {
 		return this.ede;
-	}
-
-	@Override
-	public void setInitialEvent(AbsEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

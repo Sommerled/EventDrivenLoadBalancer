@@ -26,7 +26,7 @@ public class ContextLoader {
 		return contexts;
 	}
 	
-	public static void loadContexts(String fileName) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException{
+	public static void loadContexts(String fileName, String keystorePath) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException{
 		File inputFile = new File(fileName);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -41,11 +41,11 @@ public class ContextLoader {
         
         for(int i = 0; i < connections.getLength(); i++){
         	Node n = connections.item(i);
-        	processContextNode(n);
+        	processContextNode(n, keystorePath);
         }
 	}
 	
-	public static ConnectionContext processContextNode(Node n){
+	public static ConnectionContext processContextNode(Node n, String keystorePath){
 		ConnectionContext context = new ConnectionContext();
 		NodeList children = n.getChildNodes();
 		
@@ -56,7 +56,7 @@ public class ContextLoader {
 				NodeList connections = child.getChildNodes();
 				for(int j = 0; j < connections.getLength();j++){
 					if(ContextNodes.CONNECTION.equals(connections.item(j).getNodeName())){
-						ConnectionContext childContext = processContextNode(connections.item(j));
+						ConnectionContext childContext = processContextNode(connections.item(j), keystorePath);
 						childContext.setListensFor(context);
 					}
 				}
@@ -79,6 +79,34 @@ public class ContextLoader {
 			case ContextNodes.TIMEOUT:
 				context.setTimeout(Integer.parseInt(child.getChildNodes().item(0).getNodeValue()));
 				break;
+			case ContextNodes.HTTP:
+				context.setHttpContext(new HTTPContext());
+				break;
+			case ContextNodes.KEYSTORE:
+				if(child.hasChildNodes()){
+					NodeList keystore = child.getChildNodes();
+					
+					for(int j = 0; j < keystore.getLength(); j++){
+						Node item = keystore.item(j);
+						
+						switch(item.getNodeName()){
+							case ContextNodes.STORE:
+								context.setKeystorePath(keystorePath + "\\" + item.getChildNodes().item(0).getNodeValue());
+								break;
+							case ContextNodes.PASSWORD:
+								context.setKeystorePassword(item.getChildNodes().item(0).getNodeValue());
+								break;
+							case ContextNodes.TYPE:
+								context.setKeystoreType(item.getChildNodes().item(0).getNodeValue());
+								break;
+							case ContextNodes.KEYALGORITHM:
+								context.setKeyAlgorithm(item.getChildNodes().item(0).getNodeValue());
+								break;
+						}
+					}
+				}
+				
+				break;
 			}
 		}
 		
@@ -90,4 +118,5 @@ public class ContextLoader {
 		return context;
 		
 	}
+	
 }

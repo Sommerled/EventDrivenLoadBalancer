@@ -162,7 +162,7 @@ public class LbSocketFactory {
 		if("None".equals(c.getProtocol())){
 			s = new ServerSocket(c.getPort());
 		}else{
-			s = createSSLServerSocket(c.getPort(), c.getKeystorePath(), c.getKeystoreType(), c.getKeystorePassword(), c.getAlgorithm(), c.getProtocol());
+			s = createSSLServerSocket(c.getPort(), c.getKeystorePath(), c.getKeystoreType(), c.getKeystorePassword(), c.getKeyAlgorithm(), c.getProtocol());
 		}
 		
 		return s;
