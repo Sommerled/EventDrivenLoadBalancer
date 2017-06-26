@@ -6,6 +6,7 @@ import context.ConnectionContext;
 import context.ContextLoader;
 import eventhandler.EventHandler;
 import server.connectionkeeper.ConnectionCreator;
+import server.connectionkeeper.ConnectionKeeper;
 import server.connectionkeeper.NewConnectionEvent;
 
 public class Server {
@@ -22,6 +23,11 @@ public class Server {
 		Thread ccThread = new Thread(cc);
 		ccThread.setName("ConnectionCreator");
 		ccThread.start();
+		
+		ConnectionKeeper ck = new ConnectionKeeper(this.handler, this.handler);
+		Thread ckThread = new Thread(ck);
+		ckThread.setName("ConnectionKeeper");
+		ckThread.start();
 		
 		List<ConnectionContext> contexts = ContextLoader.getLoadedContexts();
 		for(int i = 0; i < contexts.size(); i++){

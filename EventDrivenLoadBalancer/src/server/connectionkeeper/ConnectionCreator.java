@@ -56,7 +56,9 @@ public class ConnectionCreator extends AbsEventConsumer implements Runnable, Err
 			t = new Thread(ssw);
 			System.out.println("new ServerSocketWorker");
 		}else{
-			System.out.println("new SocketWorker");
+			NewBalancedConnectionEvent nbce = new NewBalancedConnectionEvent(null, this, nce.getContext());
+			this.eventDispatcher.put(nbce);
+			System.out.println("new balanced connection");
 		}
 		
 		if(t != null){
