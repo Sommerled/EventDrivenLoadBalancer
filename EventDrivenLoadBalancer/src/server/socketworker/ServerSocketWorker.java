@@ -82,7 +82,7 @@ public class ServerSocketWorker extends ConnectionProducer implements ErrorProne
 		while(socket == null){
 			try {
 				socket = this.ss.accept();
-				NewSocketEvent nsEvent = new NewSocketEvent(this.getId(), this, socket, this.getContext());
+				NewSocketEvent nsEvent = new NewSocketEvent(this.getId(), this, this.getContext(), socket);
 				events.add(nsEvent);
 			} catch (IOException e) {
 				e.printStackTrace();

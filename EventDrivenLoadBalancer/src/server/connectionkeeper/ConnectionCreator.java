@@ -12,6 +12,7 @@ import eventhandler.EventListener;
 import eventhandler.EventListenerException;
 import server.AbsEventConsumer;
 import server.AbsEventProcesser;
+import server.RegisterProducerEvent;
 import server.socketworker.ServerSocketWorker;
 
 public class ConnectionCreator extends AbsEventConsumer implements Runnable, ErrorProne, EventDispatcherAware{
@@ -55,6 +56,8 @@ public class ConnectionCreator extends AbsEventConsumer implements Runnable, Err
 			ServerSocketWorker ssw = new ServerSocketWorker(this.getEventDispatcher(), nce.getContext());
 			t = new Thread(ssw);
 			System.out.println("new ServerSocketWorker");
+			RegisterProducerEvent rpe = new RegisterProducerEvent(null, this, nce.getContext(), ssw);
+			this.getEventDispatcher().put(rpe);
 		}else{
 			NewBalancedConnectionEvent nbce = new NewBalancedConnectionEvent(null, this, nce.getContext());
 			this.eventDispatcher.put(nbce);

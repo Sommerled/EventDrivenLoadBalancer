@@ -11,10 +11,11 @@ import eventhandler.EventDispatcher;
 import eventhandler.EventListener;
 import eventhandler.EventListenerException;
 import server.AbsEventProcesser;
+import server.socketworker.ServerSocketWorker;
 
 public class ConnectionKeeper extends AbsEventProcesser implements Runnable{
 	private Map<ConnectionContext, ConnectionBallancer> balancingAct; //ya I needed a laugh
-	
+	private List<ServerSocketWorker> incomingSocketListeners;
 	
 	public ConnectionKeeper(EventListener eventListener, EventDispatcher eventDispatcher) {
 		super(eventListener, eventDispatcher);
